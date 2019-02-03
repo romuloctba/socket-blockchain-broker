@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const port = process.argv[2] || 8787;
+const port = process.argv[2] || process.env.PORT || 8787;
 const WS_URL = `ws://localhost:${port}`;
 
 const wss = new WebSocket.Server({
