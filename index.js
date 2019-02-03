@@ -13,15 +13,13 @@ wss.on('connection', function connection(ws, req) {
     console.log(`Connected from ip ${ip}`);
     
     ws.on('message', function incoming(message) {
-        message = JSON.parse(message);
-
-        if (!message || !message.action || socketAPI[message.action] == undefined) {
-            ws.send('{ "author": "${WS_URL}", "message": "INVALID_ACTION"}');
-            return;      
-        }
-        
-        const action = socketAPI[message.action];
-        action(message, ws);
+        var index = 0;
+        wss.clients.forEach(function each(client) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(message);
+                index++;
+                console.log(`Message received and broadcasted to  ${index}`)
+            }
+        });
     });
 });
-
