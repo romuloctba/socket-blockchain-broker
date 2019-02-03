@@ -21,7 +21,6 @@ wss.on('connection', function connection(ws, req) {
     ws.on('message', (message) => {
         var index = 0;
         wss.clients.forEach((client) => {
-            console.log(`client !== ws ${client !== ws}  client.readyState ${client.readyState}`, wss.clients.size);
             if (client !== ws && client.readyState === 1) {
                 client.send(message);
                 index++;
