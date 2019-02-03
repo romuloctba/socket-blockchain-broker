@@ -29,10 +29,10 @@ wss.on('connection', function connection(ws, req) {
             }
         });
     });
-    setInterval(() => {
-        wss.clients.forEach((client) => {
-          client.send(JSON.stringify({ tic: new Date().toTimeString().toString() }));
-        });
-    }, 5000);
-      
+    
 });
+setInterval(() => {
+    wss.clients.forEach((client) => {
+        client.send(JSON.stringify({ tic: new Date().toTimeString().toString() }));
+    });
+}, 5000);
