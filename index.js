@@ -1,10 +1,16 @@
-const WebSocket = require('ws');
-const port = process.argv[2] || process.env.PORT || 8787;
-const WS_URL = `ws://0.0.0.0:${port}`;
 
-const wss = new WebSocket.Server({
-    port
-});
+const express = require('express');
+const SocketServer = require('ws').Server;
+const path = require('path');
+
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+const wss = new SocketServer({ server });
 
 console.log('Server Running ', wss.address());
 
@@ -12,14 +18,21 @@ wss.on('connection', function connection(ws, req) {
     const ip = req.connection.remoteAddress;
     console.log(`Connected from ip ${ip}`);
     
-    ws.on('message', function incoming(message) {
+    ws.on('message', (message) => {
         var index = 0;
-        wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
+        wss.clients.forEach((client) => {
+            console.log(`client !== ws ${client !== ws}  client.readyState ${client.readyState}`, wss.clients.size);
+            if (client !== ws && client.readyState === 1) {
                 client.send(message);
                 index++;
                 console.log(`Message received and broadcasted to  ${index}`)
             }
         });
     });
+    setInterval(() => {
+        wss.clients.forEach((client) => {
+          client.send(JSON.stringify({ tic: new Date().toTimeString().toString() }));
+        });
+    }, 5000);
+      
 });
