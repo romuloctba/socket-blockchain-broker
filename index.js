@@ -5,7 +5,7 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, 'index.html');
-const herokuUrl = JSON.stringify(process.env);
+const herokuUrl = process.env.HEROKU_APP_NAME;
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX) )
